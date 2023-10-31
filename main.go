@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -18,15 +17,15 @@ func main() {
 	//Connection to database
 	DB, err := database.NewDatabase()
 	if err != nil {
-		fmt.Println("Cannot connect to database", err)
+		log.Println("Cannot connect to database", err)
 	}
 	// Information for operating program
 
-	fmt.Println("go to http://localhost:8002/createproduct")
+	log.Println("go to http://localhost:8002/createproduct")
 
-	fmt.Println("example of Json Body", ` {
+	log.Println("example of Json Body", ` {
 		"user_id":3,
-	   "product_name":"Iphone",
+	   "product_name":"Iphone",f
 	   "product_description":"its a nice phone",
 	   "product_images":["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzoXEEUkHp4Y3tRke237DccQoFTs4slk4JbA&usqp=CAU"],
 	   "product_price":1000
@@ -35,13 +34,13 @@ func main() {
 	go func() {
 		err := consumer.ConsumeMessages(DB)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 	}()
 	//insatnce if producder
 	rabbitMQProducer, err := producer.NewRabbitMQProducer("message_queue")
 	if err != nil {
-		fmt.Println("Error creating RabbitMQ producer:", err)
+		log.Println("Error creating RabbitMQ producer:", err)
 		return
 	}
 	defer rabbitMQProducer.Close()

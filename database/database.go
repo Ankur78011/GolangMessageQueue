@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/lib/pq"
 	"zocket.example.com/models"
@@ -28,7 +29,7 @@ func NewDatabase() (*Database, error) {
 	}
 	_, err = db.Exec(`create database zocket`)
 	if err != nil {
-		fmt.Printf("cannot connect to database")
+		log.Printf("cannot connect to database")
 	}
 	//accessing database
 
@@ -36,7 +37,7 @@ func NewDatabase() (*Database, error) {
 
 	dbtwo, err := sql.Open("postgres", psqlconntwo)
 
-	_, err = dbtwo.Exec(`CREATE TABLE users (
+	_, err = dbtwo.Exec(`CREATE TABLE users IF NOT EXISTS (
 		id serial PRIMARY KEY,
 		name  text,
 		mobile text,
@@ -45,8 +46,11 @@ func NewDatabase() (*Database, error) {
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);`)
+	if err != nil {
+		log.Println("Cannot create user table", err)
+	}
 
-	_, err = dbtwo.Exec(`CREATE TABLE products (
+	_, err = dbtwo.Exec(`CREATE TABLE products IF NOT EXISTS(
 		product_id SERIAL PRIMARY KEY,
 		product_name text,
 		product_description TEXT,
@@ -56,8 +60,11 @@ func NewDatabase() (*Database, error) {
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);`)
+	if err != nil {
+		log.Println("Cannot create product table", err)
+	}
 
-	fmt.Println("database connection successful")
+	log.Println("database connection successful")
 	return &Database{Db: dbtwo}, nil
 }
 
@@ -70,7 +77,7 @@ func (dbInstance *Database) StoreProduct(newproduct *models.NewProduct) (int64, 
 
 	err := dbInstance.Db.QueryRow(sqlStatement, newproduct.ProductName, newproduct.ProductDescription, pq.Array(newproduct.ProductImages), newproduct.ProductPrice).Scan(&productID)
 	if err != nil {
-		fmt.Println("Cannot insert new record because of", err)
+		log.Println("Cannot insert new record because of", err)
 		return 0, err
 	}
 
@@ -94,7 +101,7 @@ func (dbInstance *Database) AddCompressedProductImages(product_id int, LocalFile
 	psqlArrayFileName := pq.Array(LocalFileName)
 	_, err := dbInstance.Db.Exec(sql, psqlArrayFileName, product_id)
 	if err != nil {
-		fmt.Println("cannot insert local file path in database")
+		log.Println("cannot insert local file path in database")
 		return err
 	}
 	return nil

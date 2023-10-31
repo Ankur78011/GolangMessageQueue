@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -19,7 +20,7 @@ func ConsumeMessages(Db *database.Database) error {
 		return fmt.Errorf("failed to connect to RabbitMQ: %v", err)
 	}
 	defer connection.Close()
-	fmt.Println("Successfully connected to RabbitMQ instance")
+	log.Println("Successfully connected to RabbitMQ instance")
 	channel, err := connection.Channel()
 	if err != nil {
 		return fmt.Errorf("failed to open a channel: %v", err)
@@ -51,7 +52,7 @@ func ConsumeMessages(Db *database.Database) error {
 
 	go func() {
 		for message := range messages {
-			fmt.Printf("Received a message: %s\n", message.Body)
+			log.Printf("Received a message: %s\n", message.Body)
 			err = ConsumerFunction(string(message.Body), Db)
 			if err != nil {
 				fmt.Printf("Error=%s", err)
@@ -59,7 +60,7 @@ func ConsumeMessages(Db *database.Database) error {
 		}
 	}()
 
-	fmt.Println("Consumer is waiting for messages. To exit, press Ctrl+C")
+	log.Println("Consumer is waiting for messages. To exit, press Ctrl+C")
 	select {}
 }
 
@@ -96,7 +97,7 @@ func ConsumerFunction(productID string, Db *database.Database) error {
 	if err != nil {
 		fmt.Println("Cannot send compressed files to database ", err)
 	}
-	fmt.Println("Images downloaded, compressed, and saved successfully and local path stored in the database")
+	log.Println("Images downloaded, compressed, and saved successfully and local path stored in the database")
 	return nil
 
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 
@@ -17,12 +17,12 @@ import (
 func TestIntegration(t *testing.T) {
 	DB, err := database.NewDatabase()
 	if err != nil {
-		fmt.Println("Cannot connect to database", err)
+		log.Println("Cannot connect to database", err)
 	}
 
 	rabbitMQProducer, err := producer.NewRabbitMQProducer("message_queue")
 	if err != nil {
-		fmt.Println("Error creating RabbitMQ producer:", err)
+		log.Println("Error creating RabbitMQ producer:", err)
 		return
 	}
 	defer rabbitMQProducer.Close()

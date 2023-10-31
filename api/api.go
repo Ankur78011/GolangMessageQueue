@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net/http"
 
 	"zocket.example.com/database"
@@ -15,7 +15,7 @@ func CreateNewProductHandler(producer *producer.RabbitMQProducer, Db *database.D
 		var newProduct models.NewProduct
 		err := json.NewDecoder(r.Body).Decode(&newProduct)
 		if err != nil {
-			fmt.Println("Error", err)
+			log.Println("Error", err)
 			http.Error(w, "Invalid Detials", http.StatusBadRequest)
 			return
 		}
@@ -27,7 +27,7 @@ func CreateNewProductHandler(producer *producer.RabbitMQProducer, Db *database.D
 		//passing product_id to the producer
 		err = producer.PublishMessage(int(productID))
 		if err != nil {
-			fmt.Println("Cannot send Id to Producer", err)
+			log.Println("Cannot send Id to Producer", err)
 			http.Error(w, "Invalid Input", http.StatusBadRequest)
 		}
 

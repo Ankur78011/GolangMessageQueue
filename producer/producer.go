@@ -2,6 +2,7 @@ package producer
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
 	"github.com/streadway/amqp"
@@ -56,7 +57,7 @@ func (p *RabbitMQProducer) PublishMessage(prodId int) error {
 		return fmt.Errorf("failed to publish a message: %v", err)
 	}
 
-	fmt.Println("Successfully published message to message queue")
+	log.Println("Successfully published message to message queue")
 	return nil
 }
 
