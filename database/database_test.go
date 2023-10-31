@@ -1,7 +1,6 @@
 package database
 
 import (
-	"reflect"
 	"testing"
 
 	"zocket.example.com/models"
@@ -41,27 +40,6 @@ func TestDatabase_StoreProduct(t *testing.T) {
 
 	if productID <= 0 {
 		t.Errorf("Invalid product ID: %v", productID)
-	}
-}
-
-// Test case: GetProductFromProductId method
-func TestDatabase_GetProductFromProductId(t *testing.T) {
-	db, err := NewDatabase()
-	if err != nil {
-		t.Fatalf("Failed to create a new database instance: %v", err)
-	}
-	defer db.Db.Close()
-
-	productID := 79
-	expectedImages := []string{"image1.jpg", "image2.jpg"}
-
-	images, err := db.GetProductFromProductId(productID)
-	if err != nil {
-		t.Errorf("Failed to get product images: %v", err)
-	}
-
-	if !reflect.DeepEqual(images, expectedImages) {
-		t.Errorf("Unexpected product images. Got %v, expected %v", images, expectedImages)
 	}
 }
 

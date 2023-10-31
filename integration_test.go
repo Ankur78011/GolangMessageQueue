@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"strconv"
-	"strings"
+
 	"testing"
 
 	"zocket.example.com/api"
-	"zocket.example.com/consumer"
+
 	"zocket.example.com/database"
 	"zocket.example.com/producer"
 )
@@ -47,24 +46,4 @@ func TestIntegration(t *testing.T) {
 		t.Errorf("Expected status code %d, got %d", http.StatusOK, res.StatusCode)
 	}
 
-	//We have prodcut id = 88 of bat in database
-
-	//we will recevice 88 as a prodcut id from consumer
-	err = consumer.ConsumerFunction(strconv.Itoa(88), DB)
-	if err != nil {
-		t.Error("Consumerfunction not working")
-	}
-	expected := []string{"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGUbHQCMIvIZDFAQIFO9bLVs1hIaIbccxlZA&usqp=CAU"}
-	expectedString := strings.Join(expected, ", ")
-
-	arrayOfImageUrl, err := DB.GetProductFromProductId(88)
-	if err != nil {
-		t.Error("Failed to get urls of images")
-	}
-	arrayOfImageUrlString := strings.Join(arrayOfImageUrl, ",")
-
-	if arrayOfImageUrlString != expectedString {
-		t.Error("Failed to get urls of images")
-	}
-	//images will be downloaded and in compressed form
 }

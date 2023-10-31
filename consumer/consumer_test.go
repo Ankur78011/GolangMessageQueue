@@ -14,7 +14,7 @@ func TestConsumerFunction(t *testing.T) {
 	if err != nil {
 		fmt.Println("Cannot connect to database", err)
 	}
-	err = ConsumerFunction("74", DB)
+	err = ConsumerFunction("1", DB)
 	if err != nil {
 		t.Errorf("Consumer Function Failed")
 	}

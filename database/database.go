@@ -13,7 +13,6 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = "password"
-	dbname   = "Zocket"
 )
 
 type Database struct {
@@ -21,13 +20,45 @@ type Database struct {
 }
 
 func NewDatabase() (*Database, error) {
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	// for makeing a databse when you run this file
+	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s sslmode=disable", host, port, user, password)
 	db, err := sql.Open("postgres", psqlconn)
 	if err != nil {
 		return nil, err
 	}
+	_, err = db.Exec(`create database zocket`)
+	if err != nil {
+		fmt.Printf("cannot connect to database")
+	}
+	//accessing database
+
+	psqlconntwo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=zocket sslmode=disable", host, port, user, password)
+
+	dbtwo, err := sql.Open("postgres", psqlconntwo)
+
+	_, err = dbtwo.Exec(`CREATE TABLE users (
+		id serial PRIMARY KEY,
+		name  text,
+		mobile text,
+		latitude DOUBLE PRECISION,
+		longitude DOUBLE PRECISION,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);`)
+
+	_, err = dbtwo.Exec(`CREATE TABLE products (
+		product_id SERIAL PRIMARY KEY,
+		product_name text,
+		product_description TEXT,
+		product_images TEXT[], 
+		product_price int,
+		compressed_product_images TEXT[], 
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);`)
+
 	fmt.Println("database connection successful")
-	return &Database{Db: db}, nil
+	return &Database{Db: dbtwo}, nil
 }
 
 // Sending Prodcut details
